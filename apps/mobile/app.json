@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Jan Samasya Nivaran Manch",
+    "slug": "updkp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "updkp",
+    "userInterfaceStyle": "light",
+    "splash": { "backgroundColor": "#1d4ed8", "resizeMode": "contain" },
+    "android": {
+      "package": "org.updkp.app",
+      "adaptiveIcon": { "backgroundColor": "#1d4ed8" },
+      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION", "READ_MEDIA_IMAGES"]
+    },
+    "ios": { "bundleIdentifier": "org.updkp.app", "supportsTablet": true },
+    "extra": { "apiUrl": "https://your-domain.example" },
+    "plugins": ["expo-secure-store", ["expo-location", { "locationWhenInUsePermission": "Used to attach an optional GPS location to your complaint." }], ["expo-image-picker", { "photosPermission": "Used to attach photos to your complaint." }]]
+  }
+}
