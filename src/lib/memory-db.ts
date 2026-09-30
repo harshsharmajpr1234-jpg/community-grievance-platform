@@ -176,6 +176,39 @@ export class InMemoryCollection<T extends Doc = Doc> {
     return { acknowledged: true, matchedCount: modified, modifiedCount: modified };
   }
 
+  async findOneAndUpdate(filter: Doc, update: Doc, options?: { upsert?: boolean; returnDocument?: "after" | "before" }) {
+    let index = this.docs.findIndex((d) => matchDoc(d, filter));
+    if (index === -1) {
+      if (options?.upsert) {
+        const newDoc: any = {};
+        if (filter) Object.assign(newDoc, filter);
+        if (update.$setOnInsert) Object.assign(newDoc, update.$setOnInsert);
+        if (update.$set) Object.assign(newDoc, update.$set);
+        if (update.$inc) {
+          for (const [k, v] of Object.entries(update.$inc)) {
+            newDoc[k] = (Number(newDoc[k]) || 0) + Number(v);
+          }
+        }
+        if (!newDoc.id) newDoc.id = randomUUID();
+        await this.insertOne(newDoc as T);
+        return options.returnDocument === "after" ? newDoc : null;
+      }
+      return null;
+    }
+
+    const oldDoc = JSON.parse(JSON.stringify(this.docs[index]));
+    const doc: Record<string, any> = { ...this.docs[index] };
+    if (update.$set) Object.assign(doc, update.$set);
+    if (update.$inc) {
+      for (const [k, v] of Object.entries(update.$inc)) {
+        doc[k] = (Number(doc[k]) || 0) + Number(v);
+      }
+    }
+    this.checkUniqueConstraint(doc as T, index);
+    this.docs[index] = doc as T;
+    return options?.returnDocument === "after" ? doc : oldDoc;
+  }
+
   async deleteOne(filter: Doc) {
     const index = this.docs.findIndex((d) => matchDoc(d, filter));
     if (index !== -1) {

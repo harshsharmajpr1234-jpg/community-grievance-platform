@@ -41,7 +41,7 @@ export default async function CommunityPage({ searchParams }: { searchParams: Pr
           ))}
         </ul>
       )}
-      <Pagination page={page} totalPages={Math.max(1, Math.ceil(total / 10))} hrefFor={hrefFor} lang={lang} />
+      <Pagination page={page} totalPages={Math.max(1, Math.ceil(Number(total) / 10))} hrefFor={hrefFor} lang={lang} />
     </div>
   );
 }
